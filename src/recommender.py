@@ -80,36 +80,45 @@ def score_song(user_prefs: Dict, song: Dict) -> Tuple[float, List[str]]:
     """
     Scores a single song against user preferences (the Algorithm Recipe).
 
+    Weight-shift variant: energy is doubled and genre is halved relative to
+    the original recipe, to make audio "feel" (energy) count as much as the
+    genre/mood labels.
+
     Rules (max score = 4.0):
-      - Genre match      -> +2.0   (strongest signal: sets the "lane")
+      - Genre match      -> +1.0   (was +2.0)
       - Mood match       -> +1.0
-      - Energy similarity -> +0.0 to +1.0, rewarding closeness to the target:
-                             1 - abs(target_energy - song_energy)
+      - Energy similarity -> +0.0 to +2.0, rewarding closeness to the target:
+                             2.0 * (1 - abs(target_energy - song_energy))
 
     Expects user_prefs with keys: favorite_genre, favorite_mood, target_energy.
     Returns (score, reasons) where reasons explains where the points came from.
 
     Required by recommend_songs() and src/main.py
     """
+    # Weights (tweak these to re-tune the recipe).
+    GENRE_WEIGHT = 1.0
+    MOOD_WEIGHT = 1.0
+    ENERGY_WEIGHT = 2.0
+
     score = 0.0
     reasons: List[str] = []
 
-    # Rule 1 — Genre match (+2.0)
+    # Rule 1 — Genre match (+1.0)
     if song["genre"] == user_prefs["favorite_genre"]:
-        score += 2.0
-        reasons.append(f"genre match: {song['genre']} (+2.0)")
+        score += GENRE_WEIGHT
+        reasons.append(f"genre match: {song['genre']} (+{GENRE_WEIGHT:.1f})")
 
     # Rule 2 — Mood match (+1.0)
     if song["mood"] == user_prefs["favorite_mood"]:
-        score += 1.0
-        reasons.append(f"mood match: {song['mood']} (+1.0)")
+        score += MOOD_WEIGHT
+        reasons.append(f"mood match: {song['mood']} (+{MOOD_WEIGHT:.1f})")
 
-    # Rule 3 — Energy similarity (0.0 to 1.0, graded by closeness)
-    energy_similarity = 1 - abs(user_prefs["target_energy"] - song["energy"])
-    score += energy_similarity
+    # Rule 3 — Energy similarity (0.0 to 2.0, graded by closeness)
+    energy_points = ENERGY_WEIGHT * (1 - abs(user_prefs["target_energy"] - song["energy"]))
+    score += energy_points
     reasons.append(
         f"energy {song['energy']} close to target "
-        f"{user_prefs['target_energy']} (+{energy_similarity:.2f})"
+        f"{user_prefs['target_energy']} (+{energy_points:.2f})"
     )
 
     return score, reasons

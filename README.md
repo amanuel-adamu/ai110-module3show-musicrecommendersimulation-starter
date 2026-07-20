@@ -161,11 +161,130 @@ Loaded songs: 18
 
 ## Experiments You Tried
 
-Use this section to document the experiments you ran. For example:
+I ran the recommender against three distinct taste profiles (defined in
+`src/main.py`) via `python -m src.main` to see how it behaves for different
+kinds of listeners. The top 5 for each are below.
 
-- What happened when you changed the weight on genre from 2.0 to 0.5
-- What happened when you added tempo or valence to the score
-- How did your system behave for different types of users
+**High-Energy Pop** — `pop / happy / 0.9`
+
+```
+============================================
+  TOP RECOMMENDATIONS - High-Energy Pop
+  pop / happy (energy ~0.9)
+============================================
+
+1. Sunrise City - Neon Echo
+   Score: 3.92 / 4.0
+   Why:
+     - genre match: pop (+2.0)
+     - mood match: happy (+1.0)
+     - energy 0.82 close to target 0.9 (+0.92)
+
+2. Gym Hero - Max Pulse
+   Score: 2.97 / 4.0
+   Why:
+     - genre match: pop (+2.0)
+     - energy 0.93 close to target 0.9 (+0.97)
+
+3. Rooftop Lights - Indigo Parade
+   Score: 1.86 / 4.0
+   Why:
+     - mood match: happy (+1.0)
+     - energy 0.76 close to target 0.9 (+0.86)
+
+4. Storm Runner - Voltline
+   Score: 0.99 / 4.0
+   Why:
+     - energy 0.91 close to target 0.9 (+0.99)
+
+5. Neon Overdrive - Pulse Theory
+   Score: 0.95 / 4.0
+   Why:
+     - energy 0.95 close to target 0.9 (+0.95)
+```
+
+**Chill Lofi** — `lofi / chill / 0.4`
+
+```
+============================================
+  TOP RECOMMENDATIONS - Chill Lofi
+  lofi / chill (energy ~0.4)
+============================================
+
+1. Midnight Coding - LoRoom
+   Score: 3.98 / 4.0
+   Why:
+     - genre match: lofi (+2.0)
+     - mood match: chill (+1.0)
+     - energy 0.42 close to target 0.4 (+0.98)
+
+2. Library Rain - Paper Lanterns
+   Score: 3.95 / 4.0
+   Why:
+     - genre match: lofi (+2.0)
+     - mood match: chill (+1.0)
+     - energy 0.35 close to target 0.4 (+0.95)
+
+3. Focus Flow - LoRoom
+   Score: 3.00 / 4.0
+   Why:
+     - genre match: lofi (+2.0)
+     - energy 0.4 close to target 0.4 (+1.00)
+
+4. Spacewalk Thoughts - Orbit Bloom
+   Score: 1.88 / 4.0
+   Why:
+     - mood match: chill (+1.0)
+     - energy 0.28 close to target 0.4 (+0.88)
+
+5. Coffee Shop Stories - Slow Stereo
+   Score: 0.97 / 4.0
+   Why:
+     - energy 0.37 close to target 0.4 (+0.97)
+```
+
+**Deep Intense Rock** — `rock / intense / 0.9`
+
+```
+============================================
+  TOP RECOMMENDATIONS - Deep Intense Rock
+  rock / intense (energy ~0.9)
+============================================
+
+1. Storm Runner - Voltline
+   Score: 3.99 / 4.0
+   Why:
+     - genre match: rock (+2.0)
+     - mood match: intense (+1.0)
+     - energy 0.91 close to target 0.9 (+0.99)
+
+2. Gym Hero - Max Pulse
+   Score: 1.97 / 4.0
+   Why:
+     - mood match: intense (+1.0)
+     - energy 0.93 close to target 0.9 (+0.97)
+
+3. Neon Overdrive - Pulse Theory
+   Score: 0.95 / 4.0
+   Why:
+     - energy 0.95 close to target 0.9 (+0.95)
+
+4. Iron Verdict - Ashfall
+   Score: 0.92 / 4.0
+   Why:
+     - energy 0.98 close to target 0.9 (+0.92)
+
+5. Sunrise City - Neon Echo
+   Score: 0.92 / 4.0
+   Why:
+     - energy 0.82 close to target 0.9 (+0.92)
+```
+
+**What I observed:** each profile's #1 is a full genre + mood + energy match
+(~3.9/4.0). *Chill Lofi* has several strong picks because lofi is well
+represented, while *Deep Intense Rock* drops off a cliff after #1 (3.99 → 1.97 →
+0.95) since rock has only one matching song — a clear example of the
+representation bias noted above.
 
 ---
 
